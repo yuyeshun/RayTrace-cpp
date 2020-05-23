@@ -62,7 +62,8 @@ int main()
 
 	int nx = 4096;
 	int ny = 2160;
-	int ns = 200;
+	int ns = 400;
+	int MaxDepth = 100;
 
 	srand(unsigned(time(NULL)));
 
@@ -76,6 +77,7 @@ int main()
 	HitableList *world = RandomScene();
 
 	RayTracing *rayTracing = new RayTracing(nx, ny, ns, world);
+	rayTracing->SetDepth(MaxDepth);
 	rayTracing->SetCamera(camera);
 	//rayTracing->SetForceThreadNum(6);
 

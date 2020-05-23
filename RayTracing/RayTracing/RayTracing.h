@@ -16,6 +16,7 @@ public:
 	void SetNx(int nx_) { nx = nx_; }
 	void SetNy(int ny_) { ny = ny_; }
 	void SetNs(int ns_) { ns = ns_; }
+	void SetDepth(int depth_) { MaxDepth = depth_; }
 	void SetWorld(Hitable *list) { world = list; }
 	void SetCamera(Camera *pCam) { camera = pCam; }
 	void SetForceThreadNum(int num) { forceThreadNum = num; }
@@ -45,6 +46,7 @@ private:
 	int nx;
 	int ny;
 	int ns;
+	int MaxDepth = 50;
 
 	int forceThreadNum;
 

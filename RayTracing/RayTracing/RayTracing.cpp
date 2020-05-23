@@ -76,7 +76,7 @@ Vec3 RayTracing::CalculateColor(const Ray & r, int depth)
 	if (world->Hit(r, 0.001f, FLT_MAX, rec)) {
 		Ray scattered;
 		Vec3 attenuation;
-		if (depth < 50 && rec.pMat->Scatter(r, rec, attenuation, scattered)) {
+		if (depth < MaxDepth && rec.pMat->Scatter(r, rec, attenuation, scattered)) {
 			return attenuation * CalculateColor(scattered, depth + 1);
 		}
 		else {
@@ -191,8 +191,7 @@ void RayTracing::Calculate(int beginNy)
 			for (int s = 0; s < ns; ++s) {
 				float u = float(i + Random(0, 1)) / float(nx);
 				float v = float(calcNy + Random(0, 1)) / float(ny);
-				Ray r = camera->GetRay(u, v);
-				Vec3 p = r.PointAtParameter(2.0);
+				Ray r = camera->GetRay(u, v);				
 				col += CalculateColor(r, 0);
 			}
 
@@ -220,8 +219,7 @@ void RayTracing::Calculate_Range(int beginNy, int endNy)
 			for (int s = 0; s < ns; ++s) {
 				float u = float(i + Random(0, 1)) / float(nx);
 				float v = float(j + Random(0, 1)) / float(ny);
-				Ray r = camera->GetRay(u, v);
-				Vec3 p = r.PointAtParameter(2.0);
+				Ray r = camera->GetRay(u, v);				
 				col += CalculateColor(r, 0);
 			}
 
