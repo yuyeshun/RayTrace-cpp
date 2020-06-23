@@ -14,7 +14,7 @@ public:
 
 	virtual bool Scatter(const Ray &InRay, const HitRecord &rec, Vec3 &attenuation, Ray &scattered) const {
 		Vec3 target = rec.p + rec.normal + RandomInUnitSphere();
-		scattered = Ray(rec.p, target - rec.p);
+		scattered = Ray(rec.p, target - rec.p, InRay.Time());
 		attenuation = albedo;
 		return true;
 	}

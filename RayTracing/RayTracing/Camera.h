@@ -13,6 +13,12 @@ public:
 		SetFov(lookFrom, lookAt, vUp, vfov, aspect, aperture, focusDist);
 	}
 
+	Camera(Vec3 lookFrom, Vec3 lookAt, Vec3 vUp, float vfov, float aspect, float aperture, float focusDist, float t0, float t1) {
+		time0 = t0;
+		time1 = t1;
+		SetFov(lookFrom, lookAt, vUp, vfov, aspect, aperture, focusDist);
+	}
+
 public:
 
 	void SetFov(Vec3 lookFrom, Vec3 lookAt, Vec3 vUp, float vfov, float aspect, float aperture, float focusDist) {
@@ -32,7 +38,8 @@ public:
 	Ray GetRay(float s, float t) { 
 		Vec3 rd = lensRadius * RandomInUintDisk();
 		Vec3 offset = u * rd.X() + v * rd.Y();
-		return Ray(Origin + offset, LowerLeftCorner + s * Horizontal + t * Vertical - Origin - offset); 
+		float time = time0 + Random() * (time1 - time0);
+		return Ray(Origin + offset, LowerLeftCorner + s * Horizontal + t * Vertical - Origin - offset, time); 
 	}
 
 private:
@@ -43,4 +50,5 @@ private:
 	Vec3 Vertical;
 	Vec3 u, v, w;
 	float lensRadius;
+	float time0 = 0, time1 = 0;
 };

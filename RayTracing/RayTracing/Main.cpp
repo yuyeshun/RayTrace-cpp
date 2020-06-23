@@ -19,13 +19,14 @@ HitableList *RandomScene() {
 	HitableList *world = new HitableList();
 	world->AddObject(new Sphere(Vec3(0, -1000, 0), 1000, new Lambertian(Vec3(0.5, 0.5, 0.5))));
 
-	for (int a = -11; a < 11; ++a) {
-		for (int b = -11; b < 11; ++b) {
+	for (int a = -10; a < 10; ++a) {
+		for (int b = -10; b < 10; ++b) {
 			float chooseMat = Random();
 			Vec3 center(a + 0.9f * Random(), 0.2f, b + 0.9f * Random());
 			if ((center - Vec3(4, 0.2f, 0)).Length() > 0.9f) {
 				if (chooseMat < 0.75f) {
-					world->AddObject(new Sphere(center, 0.2f, new Lambertian(Vec3(Random() * Random(), Random() * Random(), Random() * Random()))));
+					world->AddObject(new MovingSphere(center, center + Vec3(0.0f, 0.5f * Random(), 0.0f), 0.0f, 1.0f, 0.2f, 
+						new Lambertian(Vec3(Random() * Random(), Random() * Random(), Random() * Random()))));
 				}
 				else if (chooseMat < 0.9f) {
 					world->AddObject(new Sphere(center, 0.2f, new Metal(Vec3(0.5f * (1 + Random()), 0.5f * (1 + Random()), 0.5f * Random()))));
@@ -60,10 +61,19 @@ int main()
 	CursorInfo.bVisible = false;
 	SetConsoleCursorInfo(outputHandle, &CursorInfo);
 
-	int nx = 4096;
-	int ny = 2160;
-	int ns = 400;
-	int MaxDepth = 100;
+	cout << "choose quality(1-Low, 2-Medium, 3-High)" << endl;	
+
+	int quality = 1;
+	cin >> quality;
+	quality = quality <= 0 ? 1 : quality;
+	int nx = 1024 * (quality > 2 ? 4 : quality);
+	int ny = 540 * (quality > 2 ? 4 : quality);
+	int ns = 100 * (quality > 2 ? 4 : quality);
+	int MaxDepth = 25 * (quality > 2 ? 4 : quality);
+
+	int imageType = 1;
+	cout << "choose image type(1-BMP, 2-PPM)" << endl;
+	cin >> imageType;
 
 	srand(unsigned(time(NULL)));
 
@@ -71,8 +81,8 @@ int main()
 	Vec3 lookAt(0, 0, 0);
 	Vec3 vUp(0, 1, 0);
 	float distToFocus = 10.0f;
-	float aperture = 0.1f;
-	Camera *camera = new Camera(lookFrom, lookAt, vUp, 20, float(nx) / float(ny), aperture, distToFocus);
+	float aperture = 0.0f;
+	Camera *camera = new Camera(lookFrom, lookAt, vUp, 20, float(nx) / float(ny), aperture, distToFocus, 0.0f, 1.0f);
 
 	HitableList *world = RandomScene();
 
@@ -93,8 +103,8 @@ int main()
 
 	beginTime = time(NULL);
 	cout << "Begin generate image......" << endl;
-	rayTracing->GenerateImage("Image", ImgType::BMP);
-	//rayTracing->GenerateImage("Image", ImgType::PPM);
+	rayTracing->GenerateImage("Image", imageType == 1 ? ImgType::BMP : ImgType::PPM);
+	
 	DisplayProgress(rayTracing, &RayTracing::GetGeneraatePercentage);
 	cout << "\b\b\b\b\b\b" << setw(5) << setiosflags(ios::fixed) << setprecision(2) << rayTracing->GetGeneraatePercentage() << "%";
 	cout << "\nGenerate finish!" << endl;

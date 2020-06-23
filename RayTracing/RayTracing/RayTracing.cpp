@@ -165,13 +165,30 @@ bool RayTracing::Generate(string path, ImgType type)
 		fwrite(&bmpinfo.biClrUsed, sizeof(bmpinfo.biClrUsed), 1, fp);
 		fwrite(&bmpinfo.biClrImportant, sizeof(bmpinfo.biClrImportant), 1, fp);		
 		
+		int skip = (nx * bpp / 8) % 4;
+		char* pSkip = nullptr;
+		if (skip > 0)
+		{
+			skip = 4 - skip;
+			pSkip = new char[skip];
+			memset(pSkip, 0, skip);
+		}		
 		for (int j = 0; j < ny; ++j) {
 			for (int i = 0; i < nx; ++i) {
 				fwrite(&pixelArray[j][i].B, 1, 1, fp);
 				fwrite(&pixelArray[j][i].G, 1, 1, fp);
-				fwrite(&pixelArray[j][i].R, 1, 1, fp);
+				fwrite(&pixelArray[j][i].R, 1, 1, fp);				
 				++GeneratePixelCount;
 			}
+			if (skip > 0)
+			{
+				fwrite(&pSkip, skip, 1, fp);
+			}
+		}	
+		if (pSkip != nullptr)
+		{
+			delete[] pSkip;
+			pSkip = nullptr;
 		}		
 	}
 
