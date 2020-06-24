@@ -1,7 +1,8 @@
-#pragma once
+﻿#pragma once
 #include <stdlib.h>
 #include <time.h>
 #include "Vec3.h"
+#include "AABB.h"
 
 const double PI = 3.14159265358979323846;
 
@@ -10,6 +11,19 @@ enum class ImgType
 	PPM,
 	BMP
 };
+
+static AABB SurroundingBox(const AABB& box0, const AABB& box1)
+{
+	Vec3 V1(fmin(box0.Min().X(), box1.Min().X()),
+		fmin(box0.Min().Y(), box1.Min().Y()),
+		fmin(box0.Min().Z(), box1.Min().Z()));
+
+	Vec3 V2(fmin(box0.Max().X(), box1.Max().X()),
+		fmin(box0.Max().Y(), box1.Max().Y()),
+		fmin(box0.Max().Z(), box1.Max().Z()));
+
+	return AABB(V1, V2);
+}
 
 static float Random(float begin = 0, float end = 1) {
 	return begin + (end - begin) * (float)(rand() / (RAND_MAX + 1.0));
@@ -33,11 +47,11 @@ static Vec3 RandomInUintDisk() {
 	return p;
 }
 
-static Vec3 Reflect(const Vec3 v, const Vec3 &n) {
+static Vec3 Reflect(const Vec3 v, const Vec3& n) {
 	return v - 2 * Dot(v, n) * n;
 }
 
-static bool Refract(const Vec3 &v, const Vec3 &n, float NiOverNt, Vec3 &refracted) {
+static bool Refract(const Vec3& v, const Vec3& n, float NiOverNt, Vec3& refracted) {
 	Vec3 uv = UnitVector(v);
 	float dt = Dot(uv, n);
 	float discriminant = 1.0f - NiOverNt * NiOverNt * (1 - dt * dt);
