@@ -2,6 +2,13 @@
 #include "AABB.h"
 #include "Util.h"
 
+void GetSphereUV(const Vec3& p, float& u, float& v)
+{
+	float phi = atan2(p.Z(), p.X());
+	float theta = asin(p.Y());
+	u = (float)(1.0f - (phi + PI) / (2.0f * PI));
+	v = (float)((theta + PI / 2.0f) / PI);
+}
 
 bool Sphere::Hit(const Ray &r, float tmin, float tmax, HitRecord &rec) const {
 	Vec3 oc = r.Origin() - center;
@@ -17,6 +24,7 @@ bool Sphere::Hit(const Ray &r, float tmin, float tmax, HitRecord &rec) const {
 			rec.p = r.PointAtParameter(rec.t);
 			rec.normal = (rec.p - center) / radius;
 			rec.pMat = pMat;
+			GetSphereUV((rec.p - center) / radius, rec.u, rec.v);
 			return true;
 		}
 		temp = (-b + sqrt(b * b - a * c)) / a;
@@ -25,6 +33,7 @@ bool Sphere::Hit(const Ray &r, float tmin, float tmax, HitRecord &rec) const {
 			rec.p = r.PointAtParameter(rec.t);
 			rec.normal = (rec.p - center) / radius;
 			rec.pMat = pMat;
+			GetSphereUV((rec.p - center) / radius, rec.u, rec.v);
 			return true;
 		}
 	}

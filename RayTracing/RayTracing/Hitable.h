@@ -9,6 +9,9 @@ struct HitRecord {
 	Vec3 p;
 	Vec3 normal;
 	Material *pMat;
+
+	float u;
+	float v;
 };
 
 class Hitable {

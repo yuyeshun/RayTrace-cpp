@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Vec3.h"
+#include "Perlin.h"
 
 class Texture {
 public:
@@ -42,4 +43,30 @@ public:
 
 	Texture* odd;
 	Texture* even;
+};
+
+class NoiseTexture : public Texture
+{
+public:
+	NoiseTexture(){}
+	NoiseTexture(float sc) : scale(sc) {}
+	virtual Vec3 Value(float u, float v, const Vec3& p) const
+	{
+		return Vec3(1,1,1) * 0.5f * (1 + sin(scale * p.Z() + 10 * noise.Turb(p)));
+	}
+
+	Perlin noise;
+	float scale;
+};
+
+class ImageTexture : public Texture
+{
+public:
+	ImageTexture() {}
+	ImageTexture(unsigned char* pixel, int A, int B) : data(pixel), nx(A), ny(B) {}
+
+	virtual Vec3 Value(float u, float v, const Vec3& p) const;
+
+	unsigned char* data;
+	int nx, ny;
 };

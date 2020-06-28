@@ -4,6 +4,11 @@
 #include <fstream>
 #include "RayTracing.h"
 
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
+#define STB_IMAGE_IMPLEMENTATION 
+#include "stb_image.h"
+
 using namespace std;
 
 void DisplayProgress(RayTracing *rt, float (RayTracing::*pFun)()) {
@@ -46,6 +51,21 @@ HitableList *RandomScene() {
 	return world;
 }
 
+HitableList* TwoPerlinSphere() {
+	HitableList* world = new HitableList();
+	Texture* PerlinTexture = new NoiseTexture(1);
+
+	world->AddObject(new Sphere(Vec3(0, -1000, 0), 1000, new Lambertian(PerlinTexture)));		
+	world->AddObject(new Sphere(Vec3(0, 1, 0), 1.0, new Lambertian(PerlinTexture)));
+
+	int nx, ny, nn;
+	unsigned char* textureData = stbi_load("earth.jpg", &nx, &ny, &nn, 0);	
+	Texture* mapTexture = new ImageTexture(textureData, nx, ny);
+	world->AddObject(new Sphere(Vec3(4, 1, 0), 1.0, new Lambertian(mapTexture)));
+
+	return world;
+}
+
 int main()
 {
 	/** cancle quick edit mode */
@@ -83,9 +103,10 @@ int main()
 	Vec3 vUp(0, 1, 0);
 	float distToFocus = 10.0f;
 	float aperture = 0.0f;
-	Camera *camera = new Camera(lookFrom, lookAt, vUp, 20, float(nx) / float(ny), aperture, distToFocus, 0.0f, 0.1f);
+	Camera *camera = new Camera(lookFrom, lookAt, vUp, 20, float(nx) / float(ny), aperture, distToFocus, 0.0f, 0.4f);
 
-	HitableList *world = RandomScene();
+	//HitableList *world = RandomScene();
+	HitableList* world = TwoPerlinSphere();
 
 	RayTracing *rayTracing = new RayTracing(nx, ny, ns, world);
 	rayTracing->SetDepth(MaxDepth);
