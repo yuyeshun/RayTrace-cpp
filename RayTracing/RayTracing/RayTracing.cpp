@@ -76,17 +76,19 @@ Vec3 RayTracing::CalculateColor(const Ray & r, int depth)
 	if (world->Hit(r, 0.001f, FLT_MAX, rec)) {
 		Ray scattered;
 		Vec3 attenuation;
+		Vec3 emitted = rec.pMat->Emitted(rec.u, rec.v, rec.p);
 		if (depth < MaxDepth && rec.pMat->Scatter(r, rec, attenuation, scattered)) {
-			return attenuation * CalculateColor(scattered, depth + 1);
+			return emitted + attenuation * CalculateColor(scattered, depth + 1);
 		}
 		else {
-			return Vec3(0, 0, 0);
+			return emitted;
 		}
 	}
 	else {
-		Vec3 unitDirection = UnitVector(r.Direction());
+		/*Vec3 unitDirection = UnitVector(r.Direction());
 		float t = 0.5f *(unitDirection.Y() + 1.f);
-		return (1.0f - t) * Vec3(1.0f, 1.0f, 1.0f) + t * Vec3(0.5f, 0.7f, 1.0f);
+		return (1.0f - t) * Vec3(1.0f, 1.0f, 1.0f) + t * Vec3(0.5f, 0.7f, 1.0f);*/
+		return Vec3(0, 0, 0);
 	}
 }
 

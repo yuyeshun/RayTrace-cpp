@@ -12,6 +12,13 @@ enum class ImgType
 	BMP
 };
 
+enum class RectType
+{
+	XY,
+	XZ,
+	YZ
+};
+
 static AABB SurroundingBox(const AABB& box0, const AABB& box1)
 {
 	Vec3 V1(fmin(box0.Min().X(), box1.Min().X()),

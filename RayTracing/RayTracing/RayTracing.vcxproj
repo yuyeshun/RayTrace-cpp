@@ -151,6 +151,7 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Perlin.cpp" />
     <ClCompile Include="RayTracing.cpp" />
+    <ClCompile Include="Rect.cpp" />
     <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="Texture.cpp" />
   </ItemGroup>
@@ -164,7 +165,9 @@
     <ClInclude Include="Perlin.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="RayTracing.h" />
+    <ClInclude Include="Rect.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="Scene.h" />
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="stb_image_write.h" />

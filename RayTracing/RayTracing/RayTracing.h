@@ -4,6 +4,7 @@
 #include "HitableList.h"
 #include "Sphere.h"
 #include "Material.h"
+#include "Rect.h"
 
 class RayTracing {
 
