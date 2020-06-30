@@ -1,6 +1,7 @@
 #pragma once
 
 #include "RayTracing.h"
+#include "Box.h"
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
@@ -76,13 +77,20 @@ HitableList* CornellBox()
 	Material* White = new Lambertian(new ConstantTexture(Vec3(0.73f, 0.73f, 0.73f)));
 	Material* Green = new Lambertian(new ConstantTexture(Vec3(0.12f, 0.45f, 0.15f)));
 	Material* Light = new DiffuseLight(new ConstantTexture(Vec3(15, 15, 15)));
+	Material* Mirror = new Metal(Vec3(0.7f, 0.6f, 0.5f));
 	
-	world->AddObject(new FlipNormal(new Rect(0, 555, 0, 555, 555, Green, RectType::YZ)));
+	world->AddObject(new FlipNormal(new Rect(0, 555, 0, 555, 555, Mirror, RectType::YZ)));
 	world->AddObject(new Rect(0, 555, 0, 555, 0, Red, RectType::YZ));
 	world->AddObject(new Rect(213, 343, 227, 322, 554, Light, RectType::XZ));
 	world->AddObject(new FlipNormal(new Rect(0, 555, 0, 555, 555, White, RectType::XZ)));
 	world->AddObject(new Rect(0, 555, 0, 555, 0, White, RectType::XZ));
-	world->AddObject(new FlipNormal(new Rect(0, 555, 0, 555, 555, White, RectType::XY)));
+	world->AddObject(new FlipNormal(new Rect(0, 555, 0, 555, 555, Green, RectType::XY)));
+
+	auto box1 = new Box(Vec3(0, 0, 0), Vec3(165, 165, 165), White);
+	auto box2 = new Box(Vec3(0, 0, 0), Vec3(165, 330, 165), White);
+
+	world->AddObject(new Translate(new RotateY(box1, -18), Vec3(130, 0, 65)));
+	world->AddObject(new Translate(new RotateY(box2, 15), Vec3(265, 0, 295)));
 
 	return world;
 }

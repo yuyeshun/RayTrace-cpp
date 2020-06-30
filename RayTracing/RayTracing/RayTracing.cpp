@@ -97,7 +97,8 @@ void RayTracing::AllocateMemory()
 	pixelArray = new Pixel *[ny];
 	for (int i = 0; i < ny; ++i) {
 		pixelArray[i] = new Pixel[nx];
-	}
+		memset(pixelArray[i], 0, sizeof(pixelArray[i]));
+	}	
 }
 
 bool RayTracing::Generate(string path, ImgType type)

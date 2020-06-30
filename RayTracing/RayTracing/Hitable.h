@@ -1,8 +1,7 @@
 #pragma once
 #include "Ray.h"
-
+#include "AABB.h"
 class Material;
-class AABB;
 
 struct HitRecord {
 	float t;
@@ -44,4 +43,31 @@ public:
 	}
 
 	Hitable* ptr;
+};
+
+class Translate : public Hitable
+{
+public:
+	Translate(Hitable* obj, const Vec3& displacement) : ptr(obj), offset(displacement){}
+
+	virtual bool Hit(const Ray& r, float tmin, float tmax, HitRecord& rec) const;
+	virtual bool BoundingBox(float t0, float t1, AABB& box) const;
+
+	Hitable* ptr;
+	Vec3 offset;
+};
+
+class RotateY : public Hitable 
+{
+public:
+	RotateY(Hitable* obj, float angle);
+
+	virtual bool Hit(const Ray& r, float tmin, float tmax, HitRecord& rec) const;
+	virtual bool BoundingBox(float t0, float t1, AABB& box) const;
+
+	Hitable* ptr;
+	float sinTheta;
+	float cosTheta;
+	bool hasBox;
+	AABB _box;
 };

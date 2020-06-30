@@ -7,45 +7,74 @@
 
 using namespace std;
 
-void DisplayProgress(RayTracing *rt, float (RayTracing::*pFun)()) {
+int TempGenerateCount = 0;
+
+void DisplayProgress(RayTracing *rt, float (RayTracing::*pFun)(), bool bNeedGenerate = false) {
 	float percentage = (rt->*pFun)();
 	while (percentage < 100.0f) {
 		cout << "\b\b\b\b\b\b" << setw(5) << setiosflags(ios::fixed) << setprecision(2) << percentage << "%";
 		Sleep(500);
 		percentage = (rt->*pFun)();
+		if (bNeedGenerate)
+		{
+			if (TempGenerateCount == 2)
+			{
+				rt->GenerateImage("TempImage", ImgType::BMP);
+				TempGenerateCount = 0;
+			}			
+			else
+			{
+				++TempGenerateCount;
+			}
+		}		
 	}
 }
 
-int main()
-{
-	/** cancle quick edit mode */
-	HANDLE inputHandle = GetStdHandle(STD_INPUT_HANDLE);
-	DWORD mode;
-	GetConsoleMode(inputHandle, &mode);
-	mode &= ~ENABLE_QUICK_EDIT_MODE;
-	SetConsoleMode(inputHandle, mode);
+int main(int argc, char** argv)
+{		
+	if (argc <= 1)
+	{
+		/** cancle quick edit mode */
+		HANDLE inputHandle = GetStdHandle(STD_INPUT_HANDLE);
+		DWORD mode;
+		GetConsoleMode(inputHandle, &mode);
+		mode &= ~ENABLE_QUICK_EDIT_MODE;
+		SetConsoleMode(inputHandle, mode);
 
-	/** hidden cursor*/
-	HANDLE outputHandle = GetStdHandle(STD_OUTPUT_HANDLE);
-	CONSOLE_CURSOR_INFO CursorInfo;
-	GetConsoleCursorInfo(outputHandle, &CursorInfo);
-	CursorInfo.bVisible = false;
-	SetConsoleCursorInfo(outputHandle, &CursorInfo);
-
-	cout << "choose quality(1-Low, 2-Medium, 3-High)" << endl;	
-
+		/** hidden cursor*/
+		HANDLE outputHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+		CONSOLE_CURSOR_INFO CursorInfo;
+		GetConsoleCursorInfo(outputHandle, &CursorInfo);
+		CursorInfo.bVisible = false;
+		SetConsoleCursorInfo(outputHandle, &CursorInfo);
+	}
+	
 	int quality = 1;
-	cin >> quality;
+	if (argc <= 1)
+	{
+		cout << "choose quality(1-Low, 2-Medium, 3-High, 4-SuperHigh)" << endl;
+		cin >> quality;
+	}
+	else
+	{
+		quality = (int)*argv[1];
+	}
 	quality = quality <= 0 ? 1 : quality;
 	int nx = 1024 * (quality > 2 ? 4 : quality);
 	int ny = 540 * (quality > 2 ? 4 : quality);
-	int ns = 100 * (quality > 2 ? 4 : quality);
+	int ns = 100 * (quality > 2 ? (quality > 3 ? 100 : 4) : quality);
 	int MaxDepth = 25 * (quality > 2 ? 4 : quality);
 
 	int imageType = 1;
-	cout << "choose image type(1-BMP, 2-PPM)" << endl;
-	cin >> imageType;
-
+	if (argc <= 2)
+	{
+		cout << "choose image type(1-BMP, 2-PPM)" << endl;
+		cin >> imageType;
+	}	
+	else
+	{
+		imageType = (int)*argv[2];
+	}
 	srand(unsigned(time(NULL)));
 
 	Vec3 lookFrom(278, 278, -800);
