@@ -2,6 +2,7 @@
 #include "Ray.h"
 #include "AABB.h"
 class Material;
+class Texture;
 
 struct HitRecord {
 	float t;
@@ -70,4 +71,17 @@ public:
 	float cosTheta;
 	bool hasBox;
 	AABB _box;
+};
+
+class ConstantMedium : public Hitable
+{
+public:
+	ConstantMedium(Hitable* obj, float d, Texture* a);
+
+	virtual bool Hit(const Ray& r, float tmin, float tmax, HitRecord& rec) const;
+	virtual bool BoundingBox(float t0, float t1, AABB& box) const;
+
+	Hitable* ptr;
+	float density;
+	Material* phaseFunc;
 };

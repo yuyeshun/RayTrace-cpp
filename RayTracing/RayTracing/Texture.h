@@ -30,7 +30,8 @@ public:
 
 	virtual Vec3 Value(float u, float v, const Vec3& p) const
 	{
-		float sines = sin(10 * p.X()) * sin(10 * p.Y()) * sin(10 * p.Z());
+		float sines = sin(1000 * p.X()) * sin(1000 * p.Y()) * sin(1000 * p.Z());
+
 		if (sines < 0)
 		{
 			return odd->Value(u, v, p);

@@ -12,6 +12,21 @@ public:
 	}
 };
 
+class Isotropic : public Material
+{
+public:
+	Isotropic(Texture* a) : albedo(a) {}
+
+	virtual bool Scatter(const Ray& InRay, const HitRecord& rec, Vec3& attenuation, Ray& scattered) const
+	{
+		scattered = Ray(rec.p, RandomInUnitSphere());
+		attenuation = albedo->Value(rec.u, rec.v, rec.p);
+		return true;
+	}
+
+	Texture* albedo;
+};
+
 class DiffuseLight : public Material
 {
 public :

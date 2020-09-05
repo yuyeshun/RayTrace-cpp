@@ -89,7 +89,8 @@ int main(int argc, char** argv)
 	//HitableList* world = TwoPerlinSphere();
 	//HitableList* world = SampleLight();
 	HitableList* world = CornellBox();
-
+	//HitableList* world = FinalScene();
+	
 	RayTracing *rayTracing = new RayTracing(nx, ny, ns, world);
 	rayTracing->SetDepth(MaxDepth);
 	rayTracing->SetCamera(camera);

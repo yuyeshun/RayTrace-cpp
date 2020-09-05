@@ -1,5 +1,6 @@
 #include "Hitable.h"
 #include "Util.h"
+#include "Material.h"
 
 bool Translate::Hit(const Ray& r, float tmin, float tmax, HitRecord& rec) const
 {
@@ -96,4 +97,75 @@ bool RotateY::BoundingBox(float t0, float t1, AABB& box) const
 {
     box = _box;
     return hasBox;
+}
+
+ConstantMedium::ConstantMedium(Hitable* obj, float d, Texture* a)
+    : ptr(obj), density(d) 
+{
+    phaseFunc = new Isotropic(a);
+}
+
+bool ConstantMedium::Hit(const Ray& r, float tmin, float tmax, HitRecord& rec) const
+{
+    bool db = Random() < 0.00001f;
+    db = false;
+    HitRecord rec1, rec2;
+    if (ptr->Hit(r, -FLT_MAX, FLT_MAX, rec1))
+    {
+        if (ptr->Hit(r, rec1.t + 0.001f, FLT_MAX, rec2))
+        {
+            if (db)
+            {
+                std::cerr << "t0 t2 " << rec1.t << " " << rec2.t << endl;
+            }
+            if (rec1.t < tmin)
+            {
+                rec1.t = tmin;
+            }
+            if (rec2.t > tmax)
+            {
+                rec2.t = tmax;
+            }
+            if (rec1.t >= rec2.t)
+            {
+                return false;
+            }
+            if (rec1.t < 0)
+            {
+                rec1.t = 0;
+            }
+
+            float distanceInsideBoundary = (rec2.t - rec1.t) * r.Direction().Length();
+            float hitDistance = -(1 / density) * log(Random());
+            if (hitDistance < distanceInsideBoundary)
+            {
+                if (db)
+                {
+                    std::cerr << "HitDistance = " << hitDistance << endl;
+                }
+
+                rec.t = rec1.t + hitDistance / r.Direction().Length();
+                if (db)
+                {
+                    std::cerr << "rec.t = " << rec.t << endl;
+                }
+
+                rec.p = r.PointAtParameter(rec.t);
+                if (db)
+                {
+                    std::cerr << "rec.p = " << rec.p << endl;
+                }
+
+                rec.normal = Vec3(1, 0, 0);
+                rec.pMat = phaseFunc;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool ConstantMedium::BoundingBox(float t0, float t1, AABB& box) const
+{
+    return ptr->BoundingBox(t0, t1, box);
 }
